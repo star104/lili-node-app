@@ -1,0 +1,29 @@
+{
+  "name": "homework8",
+  "version": "1.0.0",
+  "description": "Lili query movie, band",
+  "main": "liri.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/star104/lili-node-app.git"
+  },
+  "keywords": [
+    "lili"
+  ],
+  "author": "Star",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/star104/lili-node-app/issues"
+  },
+  "homepage": "https://github.com/star104/lili-node-app#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bandsintown": "^1.0.1",
+    "dotenv": "^6.2.0",
+    "moment": "^2.22.2",
+    "node-spotify-api": "^1.0.7"
+  }
+}
