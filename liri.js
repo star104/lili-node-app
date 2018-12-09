@@ -7,6 +7,7 @@ var Spotify = require('node-spotify-api');
 //npm package
 var axios = require("axios");
 var moment = require("moment");
+//var express = require("express");
 //var request = require("request");
 var bandsintown = require('bandsintown')("codingbootcamp");
 var spotify = new Spotify(keys.spotify);
@@ -20,30 +21,26 @@ var nodeArg = process.argv;
 var action = nodeArg[2];
 
 //empty array to load data
-var Name ="";
+var Name = "";
 
- if (nodeArg.length>=4)
- {
-   for (var i = 3; i < nodeArg.length; i++) {
-     Name = Name + nodeArg[i] + " ";
-   }
- }
- 
+if (nodeArg.length >= 4) {
+  for (var i = 3; i < nodeArg.length; i++) {
+    Name = Name + nodeArg[i] + " ";
+  }
+}
+
 switch (action) {
   case "concert-this":
-    if (nodeArg.length==3)
-    {console.log("Please specify Concert name!");}
-    else{findConcert(Name);}
+    if (nodeArg.length == 3) { console.log("Please specify Concert name!"); }
+    else { findConcert(Name); }
     break;
   case "spotify-this-song":
-  if (nodeArg.length==3)
-  {Name = Name+defSong;}
+    if (nodeArg.length == 3) { Name = Name + defSong; }
     findSong(Name);
     break;
 
   case "movie-this":
-  if (nodeArg.length==3)
-  {Name = Name+defMovie;}
+    if (nodeArg.length == 3) { Name = Name + defMovie; }
     findMovie(Name);
     break;
   case "do-what-it-says":
@@ -54,64 +51,89 @@ switch (action) {
 function findConcert(artist) {
   console.log(artist);
   bandsintown
-  .getArtistEventList(artist,"all")
-  .then(function(events) {
-   // console.log(events);
-    console.log(events[0].venue.name);
-    console.log(events[0].venue.city);
-    console.log(moment(events[0].datetime).format("MM/DD/YYYY"));
-  
-    // return array of events
-  });
-  
+    .getArtistEventList(artist, "all")
+    .then(function (events) {
+      // console.log(events);
+      console.log(events[0].venue.name);
+      console.log(events[0].venue.city);
+      console.log(moment(events[0].datetime).format("MM/DD/YYYY"));
+
+      // return array of events
+    });
+
 };
 
 function findSong(songTitle) {
-  console.log(spotify);
- }
+    spotify.search({type:'track',query:songTitle})
+    .then(function (data){
+    //console.log(data);
+    //data.tracks.items.forEach(function(element){
+    //console.log(element.artists[0].name); 
+    //console.log("\nArtists: " + element.artists[0].name);
+    //console.log("Song's name: " + element.name);
+    //console.log("Preview link: " + element.preview_url);
+    //console.log("Album: " + element.album.name);
+    
+    //});  
+     console.log("\nArtists: " + data.tracks.items[0].artists[0].name);
+     console.log("Song's name: " + data.tracks.items[0].name);
+     console.log("Preview link: " + data.tracks.items[0].preview_url);
+     console.log("Album: " + data.tracks.items[0].album.name);
+//     console.log(spotify);
+    })
+    .catch(function(err){console.log(err);throw err;
+    });
+  };
+    //function (response) {
+    //console.log("\nArtists: " + data.tracks.items[0].artists[0].name);
+    //console.log("Song's name: " + data.tracks.items[0].name);
+    //console.log("Preview link: " + data.tracks.items[0].preview_url);
+    // console.log("Album: " + data.tracks.items[0].album.name);
+     //console.log(spotify);
 
-function findMovie(movieTitle) { 
+
+function findMovie(movieTitle) {
   var movieQueryUrl = "http://www.omdbapi.com/?t=" + movieTitle + "&y=&plot=short&apikey=trilogy";
   axios.get(movieQueryUrl).then(
-  function(response) {
-    
-    console.log("\nMovie title: " + response.data.Title);
-    console.log("\nYear: " + response.data.Year);
-    console.log("\nIMDB Rating: "+ response.data.imdbRating);
-    console.log("\nRotten Tomatoes Rating: "+response.data.Ratings[1].Value);
-    console.log("\nCountry: "+response.data.Country);
-    console.log("\nLanguage: "+response.data.Language); 
-    //console.log(response.data)
-    ;}
-)};
+    function (response) {
 
-function fsCommand() 
-{
-  fs.readFile("random.txt", "utf8", function(error, data) {
+      console.log("\nMovie title: " + response.data.Title);
+      console.log("\nYear: " + response.data.Year);
+      console.log("\nIMDB Rating: " + response.data.imdbRating);
+      console.log("\nRotten Tomatoes Rating: " + response.data.Ratings[1].Value);
+      console.log("\nCountry: " + response.data.Country);
+      console.log("\nLanguage: " + response.data.Language);
+      //console.log(response.data)
+      ;
+    }
+  )
+};
 
-  // If the code experiences any errors it will log the error to the console.
-  if (error) {
-    return console.log(error);
-  }
+function fsCommand() {
+  fs.readFile("random.txt", "utf8", function (error, data) {
 
-  // We will then print the contents of data
-  console.log(data);
+    // If the code experiences any errors it will log the error to the console.
+    if (error) {
+      return console.log(error);
+    }
 
-  // Then split it by commas (to make it more readable)
-  var dataArr = data.split(",");
+    // We will then print the contents of data
+    console.log(data);
 
-  // We will then re-display the content as an array for later use.
-  console.log(dataArr);
-  switch (dataArr[0])
-  {
-  case "movie-this":
-  findMovie(dataArr[1]);
-  break;
-  case "concert-this":
-  findConcert(dataArr[1]);
-  break;
-  }
-});  
+    // Then split it by commas (to make it more readable)
+    var dataArr = data.split(",");
+
+    // We will then re-display the content as an array for later use.
+    console.log(dataArr);
+    switch (dataArr[0]) {
+      case "movie-this":
+        findMovie(dataArr[1]);
+        break;
+      case "concert-this":
+        findConcert(dataArr[1]);
+        break;
+    }
+  });
 
 }
 
